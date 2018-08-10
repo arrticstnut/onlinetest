@@ -10,16 +10,16 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include <json/josn.h>
+#include <json/json.h>
+#include <unistd.h>
 using std::cout;
 using std::endl;
 
 namespace cc
 {
 
-	WordQuery::WordQuery(Configuration & conf,WordSegmentation & jieba)
+	WordQuery::WordQuery(Configuration & conf)
 		:_conf(conf)
-		 ,_jieba(jieba)
 	{
 		loadLibrary();
 	}
@@ -55,7 +55,7 @@ namespace cc
 			string doc(len,'0');//构造len长的string
 			ifsPageLib.read(&doc[0],len);//读len长字符到string种
 			WebPage wp(doc);
-			//wp.processDoc(doc,_conf,_jieba);//在线部分不需要处理
+			wp.processDoc(_conf,WordSegmentation::getInstance());
 			_pageLib.insert(make_pair(docId,wp));
 		}
 
@@ -144,7 +144,7 @@ namespace cc
 		auto confMap = _conf.getConfMap();
 		auto stopWords = _conf.getStopWordList();
 		//分词
-		vector<string> queryWords = _jieba.cutStr(str);
+		vector<string> queryWords = WordSegmentation::getInstance().cutStr(str);
 		//去停用词
 		for(auto it = queryWords.begin();it != queryWords.end();){
 			if(stopWords.count(*it)){
@@ -185,39 +185,49 @@ namespace cc
 		}
 
 		//得到排序的文档id
-		vector<int> retDocs;
+		vector<int> docIdVec;
+		string ret;
 		if(!resultVec.empty()){
-			retDocs = executeQuery(queryWords,resultVec);
+			docIdVec = executeQuery(queryWords,resultVec);
+			ret = createJson(docIdVec,queryWords);
+			return ret;
+		}else{
+			return returnNoAnswer();
 		}
-
-		//===========
-		for(auto & elem:retDocs){
-			cout <<elem << " ";
-		}
-		cout << endl;
-		//==========
-		return "";
 	}
+
 	string WordQuery::createJson(vector<int> & docIdVec,const vector<string> & queryWords){
 		Json::Value root;
-		Json::Value arr;
+		Json::Value docments;
 		int cnt = 0;
-		for(auto id : docIdVec)
-		{
-			string summary = _pageLib[id].summary(queryWords);
-			string title = _pageLib[id].getTitle();
-			string url = _pageLib[id].getUrl();
-
-			Json::Value elem;
-			elem["title"] = title;
-			elem["summary"] = summary;
-			elem["url"] = url;
-			arr.append(elem);
-			if(++cnt == 100)// 最多记录100条
+		for(auto & docId:docIdVec){
+			string summary = _pageLib[docId].getSummary(queryWords);
+			string title = _pageLib[docId].getTitle();
+			string url = _pageLib[docId].getUrl();
+			Json::Value doc;
+			doc["title"] = title;
+			doc["summary"] = summary;
+			doc["url"] = url;
+			docments.append(doc);
+			++cnt;
+			if(cnt >= 100){//最多记录100条
 				break;
+			}
 		}
+		root["files"] = docments;
+		Json::StyledWriter writer;
+		return writer.write(root);
+	}
 
-		root["files"] = arr;
+	string WordQuery::returnNoAnswer(){
+		Json::Value root;
+		Json::Value documents;
+		Json::Value elem;
+		elem["title"] = "404, not found";
+		elem["summary"] = "sorry，没有查询到你想要的信息!";
+		elem["url"] = "https://www.baidu.com";
+		documents.append(elem);
+		root["files"] = documents;
 		Json::StyledWriter writer;
 		return writer.write(root);
 	}

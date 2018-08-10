@@ -20,11 +20,15 @@ using std::regex_search;
 using std::log;
 using std::sqrt;
 using std::string;
+using std::pair;
+using std::make_pair;
 
 namespace cc
 {
+	WebPage::WebPage(){}
 	WebPage::WebPage(const string & doc)
-	:_doc(doc)
+		:_doc(doc)
+		 ,_isProcessed(false)
 	{
 		//processDoc(_doc,conf,jieba);
 	}
@@ -52,14 +56,14 @@ namespace cc
 		_docContent = smCont.str(1);
 #endif
 		//使用正则表达式会遇到原因不明的段错误,改用string的find
-		auto docidB = doc.find("<docid>");
-		auto docidE = doc.find("</docid>");
-		auto titleB = doc.find("<title>");
-		auto titleE = doc.find("</title>");
-		auto linkB = doc.find("<link>");
-		auto linkE = doc.find("</link>");
-		auto contentB = doc.find("<content>",linkE);
-		auto contentE = doc.rfind("</content>");
+		auto docidB = _doc.find("<docid>");
+		auto docidE = _doc.find("</docid>");
+		auto titleB = _doc.find("<title>");
+		auto titleE = _doc.find("</title>");
+		auto linkB = _doc.find("<link>");
+		auto linkE = _doc.find("</link>");
+		auto contentB = _doc.find("<content>",linkE);
+		auto contentE = _doc.rfind("</content>");
 		auto npos = std::string::npos;
 		if(docidB == npos || docidE == npos || titleB == npos || titleE == npos 
 				|| linkB == npos || linkE == npos || contentB == npos || contentE == npos){
@@ -67,13 +71,13 @@ namespace cc
 			cout << "search docItem error" << endl;
 		}
 		docidB += string("<docid>").size();
-		_docId = stoi(doc.substr(docidB,docidE - docidB));
+		_docId = stoi(_doc.substr(docidB,docidE - docidB));
 		titleB += string("<title>").size();
-		_docTitle = doc.substr(titleB,titleE - titleB);
+		_docTitle = _doc.substr(titleB,titleE - titleB);
 		linkB += string("<link>").size();
-		_docUrl = doc.substr(linkB,linkE - linkB);
+		_docUrl = _doc.substr(linkB,linkE - linkB);
 		contentB += string("<content>").size();
-		_docContent = doc.substr(contentB,contentE - contentB);
+		_docContent = _doc.substr(contentB,contentE - contentB);
 		//统计词频
 		vector<string> vecWords = jieba.cutStr(_docContent);//得到分词后的单词
 		set<string> stopWords = conf.getStopWordList();//得到停用词集
@@ -93,6 +97,7 @@ namespace cc
 		for(size_t i = 0;i < TOPK_NUMBER && i < vecWordFreq.size();++i){
 			_topWords.push_back(vecWordFreq[i].first);
 		}
+		_isProcessed = true;
 	}
 
 	int WebPage::getDocId(){
@@ -105,6 +110,37 @@ namespace cc
 
 	map<string,int> & WebPage::getWordMap(){
 		return _wordsMap;
+	}
+
+	string WebPage::getTitle(){//获取标题
+		return _docTitle;
+	}
+
+	string WebPage::getUrl(){//获取url
+		return _docUrl;
+	}
+
+
+	string WebPage::getSummary(const vector<string> & queryWords){
+		istringstream iss(_doc);
+		vector<string> result;
+		string line;
+		while(iss >> line){
+			for(auto & word : queryWords){
+				if(line.find(word) != string::npos){
+					result.push_back(line);
+					break;
+				}
+			}
+			if(result.size() >= 5){
+				break;
+			}
+		}
+		string summary;
+		for(auto & elem: result) {
+			summary += elem + '\n';
+		}
+		return summary;
 	}
 
 	bool operator==(const WebPage & lhs,const WebPage & rhs){//判断两篇文档是否相等

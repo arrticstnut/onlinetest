@@ -7,32 +7,27 @@
 #include "wordSegmentation.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 using std::cout;
 using std::endl;
-
 namespace cc
 {
 
-
 	//路径是相对于 .exe 的
 	WordSegmentation::WordSegmentation(
-		const string & dict_path,
-		const string & hmm_path,
-		const string & user_dict_path,
-		const string & idf_path,
-		const string & stop_word_path
-		)
-		:_dict_path(dict_path)
-		,_hmm_path(hmm_path)
-		,_user_dict_path(user_dict_path)
-		,_idf_path(idf_path)
-		,_stop_word_path(stop_word_path)
-		,_cppjieba(_dict_path.c_str(),_hmm_path.c_str(),_user_dict_path.c_str(),_idf_path.c_str(),_stop_word_path.c_str())
-	{
-		//===============
-		cout<< "TEST WordSegmentation()" << endl;
-		//===============
-	}
+			string  dict_path,
+			string  hmm_path,
+			string  user_dict_path,
+			string  idf_path,
+			string  stop_word_path
+			)
+		//:_dict_path(dict_path)
+		// ,_hmm_path(hmm_path)
+		// ,_user_dict_path(user_dict_path)
+		// ,_idf_path(idf_path)
+		// ,_stop_word_path(stop_word_path)
+		:_cppjieba(dict_path.c_str(),hmm_path.c_str(),user_dict_path.c_str(),idf_path.c_str(),stop_word_path.c_str())
+	{}
 	void WordSegmentation::save(const string & fileOut) {
 		ofstream ofs(fileOut);
 		if(!ofs.good()){
@@ -48,12 +43,6 @@ namespace cc
 	}
 
 	vector<string> WordSegmentation::cutFile(const string & fileIn) {
-		//cppjieba::Jieba jieba(
-		//		_dict_path.c_str(),
-		//		_hmm_path.c_str(),
-		//		_user_dict_path.c_str(),
-		//		_idf_path.c_str(),
-		//		_stop_word_path.c_str());
 		vector<string> res;
 		string doc;
 		ifstream ifs(fileIn);
@@ -76,12 +65,6 @@ namespace cc
 	}
 
 	vector<string> WordSegmentation::cutStr(const string & str) {
-		//cppjieba::Jieba jieba(
-		//		_dict_path.c_str(),
-		//		_hmm_path.c_str(),
-		//		_user_dict_path.c_str(),
-		//		_idf_path.c_str(),
-		//		_stop_word_path.c_str());
 		vector<string> res;
 		string sentence;
 		istringstream iss(str);
@@ -93,11 +76,6 @@ namespace cc
 		_vecWords.clear();
 		while(iss >> sentence){
 			res.clear();
-		//===============
-		cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n"; 
-		cout<< "TEST Here" << endl;
-		cout<< "sentence = " << sentence << endl;
-		//===============
 			_cppjieba.Cut(sentence, res);
 			for(auto & elem:res){
 				_vecWords.push_back(elem);
@@ -110,36 +88,9 @@ namespace cc
 		return _vecWords;
 	}
 
-	void WordSegmentation::setDictPath(const string & dict_path){
-		_dict_path = dict_path;
+	WordSegmentation & WordSegmentation::getInstance(){
+		return instance;
 	}
 
-	void WordSegmentation::setHmmPath(const string & hmm_path){
-		_hmm_path = hmm_path;
-	}
-
-	void WordSegmentation::setUserDictPath(const string & user_dict_path){
-		_user_dict_path = user_dict_path;
-	}
-
-	void WordSegmentation::setIdfPath(const string & idf_path){
-		_idf_path = idf_path;
-	}
-
-	void WordSegmentation::setStopWordPath(const string & stop_word_path){
-		_stop_word_path = stop_word_path;
-	}
-
-	void WordSegmentation::setPath(
-			const string & dict_path,
-			const string & hmm_path,
-			const string & user_dict_path,
-			const string & idf_path,
-			const string & stop_word_path){
-		setDictPath(dict_path);
-		setHmmPath(hmm_path);
-		setUserDictPath(user_dict_path);
-		setIdfPath(idf_path);
-		setStopWordPath(stop_word_path);
-	}
-};
+	WordSegmentation  WordSegmentation::instance = WordSegmentation();
+};//endof namespace

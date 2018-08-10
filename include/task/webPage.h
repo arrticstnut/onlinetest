@@ -26,16 +26,21 @@ namespace cc
 	class WebPage
 	{
 		public:
+			WebPage();
 			WebPage(const string & doc);
 		public:
 			int getDocId();//获取文档id
 			string getDoc();//获取文档
+			string getTitle();//获取标题
+			string getUrl();//获取url
+			string getSummary(const vector<string> & queryWords);//摘要
 			map<string,int> & getWordMap();//获取文档的词频统计map
 			void processDoc(Configuration & conf,WordSegmentation & jieba);//对格式化文档进行处理
 			void calcTopK(vector<string> & wordsVec,int k,set<string> & stopWordList);//求取文档的topk词集
 		private:
 			const static int TOPK_NUMBER = 20;
 			string _doc;//整篇文档
+			bool _isProcessed;//标记是否被processDoc处理过
 			int _docId;//文档id
 			string _docTitle;//文档标题
 			string _docUrl;//文档Url

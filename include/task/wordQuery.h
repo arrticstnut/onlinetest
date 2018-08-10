@@ -27,8 +27,9 @@ namespace cc
 {
 	class WordQuery
 	{
+		private:
 		public:
-			WordQuery(Configuration & conf,WordSegmentation & jieba);
+			WordQuery(Configuration & conf);
 			string doQuery(const string & str);//执行查询，返回结果
 			void loadLibrary();//加载网页库到内存
 			vector<double> getQueryWordsWeightVector(const vector<string> & queryWords);//计算查询词的权重值
@@ -37,7 +38,6 @@ namespace cc
 			string returnNoAnswer();
 		private:
 			Configuration & _conf;//配置文件的引用
-			WordSegmentation & _jieba;//jieba分词库对象
 			unordered_map<int,WebPage> _pageLib;//网页库
 			unordered_map<int,pair<int,int> > _offsetLib;//偏移库
 			unordered_map<string,set<pair<int,double> > > _invertIndexTable;//倒排索引

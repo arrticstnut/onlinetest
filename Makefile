@@ -10,6 +10,7 @@ INC_DIR:= \
 	./include/wordSegmentation/ \
 	./include/wordSegmentation/cppjieba/ \
 	./include/wordSegmentation/cppjieba/limonp \
+	/usr/local/include \
 #SRC_DIR:= 
 #	./src/ \
 #	./src/task/ \
@@ -32,7 +33,7 @@ SRCS:=\
 	$(wildcard ./src/wordSegmentation/*.cc) \
 
 OBJS:= $(patsubst %.cc, %.o, $(SRCS))
-LIBS:= -lpthread
+LIBS:= -lpthread -ljson
 
 CXX:=g++
 
