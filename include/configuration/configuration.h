@@ -1,8 +1,8 @@
- ///
- /// @file    configuration.h
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-07-18 11:08:54
- ///
+///
+/// @file    configuration.h
+/// @author  lemon(haohb13@gmail.com)
+/// @date    2017-07-18 11:08:54
+///
 #ifndef __CC_CONFIGURATION_H__
 #define __CC_CONFIGURATION_H__
 #include <map>
@@ -20,16 +20,21 @@ using std::set;
 using std::vector;
 namespace cc
 {
-class Configuration
-{
-	public:
-		Configuration(const string &);
-		map<string,string> & getConfMap();
-		set<string> getStopWordList();
-	private:
-		string _confFilePath;
-		map<string,string> _confMap;
-		set<string> _stopWordList;//停用词
-};
+	class Configuration
+	{
+		
+		public:
+			static Configuration & getInstance();
+		public:
+			map<string,string> & getConfMap();
+			set<string> getStopWordList();
+		private:
+			Configuration(const string &);
+		private:
+			string _confFilePath;
+			map<string,string> _confMap;
+			set<string> _stopWordList;//停用词
+			static Configuration _instance;
+	};
 }//namespace cc
 #endif

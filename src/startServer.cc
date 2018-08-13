@@ -8,9 +8,11 @@
 #include "wordSegmentation.h"
 #include "wordQuery.h"
 #include "onlineServer.h"
+#include <unistd.h>
 
 void test1(){
-	cc::Configuration conf("../configuration/configuration.conf");
+	daemon(1,0);
+	cc::Configuration conf = cc::Configuration::getInstance();
 	cc::OnlineServer ser(conf);
 }
 

@@ -6,8 +6,8 @@
 #ifndef __CC_TASK_H__
 #define __CC_TASK_H__
 #include "TcpConnection.h"
-#include "cacleManager.h"
 #include "wordQuery.h"
+#include "redisPool.h"
 #include <iostream>
 #include <queue>
 #include <string>
@@ -22,11 +22,12 @@ namespace cc
 	class Task
 	{
 		public:
-			Task(wd::TcpConnectionPtr spConn,WordQuery *wordQueryPtr,string & queryStr);
+			Task(wd::TcpConnectionPtr spConn,WordQuery *wordQueryPtr,RedisPool *redisPtr,string & queryStr);
 			void process();
 		private:
 			wd::TcpConnectionPtr _spConn;
 			WordQuery * _wordQueryPtr;
+			RedisPool * _redisPtr;
 			string _queryStr;
 	};
 }//namespace cc

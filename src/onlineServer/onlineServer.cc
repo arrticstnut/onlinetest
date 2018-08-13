@@ -9,6 +9,7 @@ namespace cc
 {
 	OnlineServer::OnlineServer(Configuration & conf)
 		:_conf(conf)
+		 ,_redis(_conf.getConfMap()["RedisServerIp"].c_str(),stoi(_conf.getConfMap()["RedisServerPort"]))
 		 ,_wordQuery(conf)
 		 ,_threadPool(stoi((_conf.getConfMap())["threadNum"]),stoi((_conf.getConfMap())["queSize"]))
 		 ,_tcpServer(_conf.getConfMap()["ip"].c_str(),stoi(_conf.getConfMap()["port"]))
@@ -16,17 +17,16 @@ namespace cc
 		using namespace std::placeholders;
 		_threadPool.start();
 		_tcpServer.setConnectionCallback(&OnlineServer::onConnection);
-		_tcpServer.setMessageCallback(std::bind(&OnlineServer::onMessage,_1,&_wordQuery,&_threadPool));
+		_tcpServer.setMessageCallback(std::bind(&OnlineServer::onMessage,_1,&_wordQuery,&_redis,&_threadPool));
 		_tcpServer.setCloseCallback(&OnlineServer::onClose);
 		_tcpServer.start();
 	}
 	void OnlineServer::onConnection(const wd::TcpConnectionPtr & conn){
-		printf("\n> %s has connected!\n", conn->toString().c_str());
-		//conn->send("hello, welcome to Chat Server.\n");
+		//printf("\n> %s has connected!\n", conn->toString().c_str());
 	}
 
 	//接收客户端信息，将收到的信息交给线程池处理
-	void OnlineServer::onMessage(const wd::TcpConnectionPtr & conn,WordQuery * wordQueryPtr,wd::Threadpool *pThreadPool){
+	void OnlineServer::onMessage(const wd::TcpConnectionPtr & conn,WordQuery * wordQueryPtr,RedisPool *redisPtr,wd::Threadpool *pThreadPool){
 		string querWord(conn->receive());
 		if(!querWord.empty()){
 			auto it =querWord.end()-1;
@@ -34,9 +34,9 @@ namespace cc
 				querWord.erase(it);
 			}
 		}
-		(*pThreadPool).addTask(std::bind(&Task::process,Task(conn,wordQueryPtr,querWord)));
+		(*pThreadPool).addTask(std::bind(&Task::process,Task(conn,wordQueryPtr,redisPtr,querWord)));
 	}
 	void OnlineServer::onClose(const wd::TcpConnectionPtr & conn){
-		printf("> %s has closed. \n", conn->toString().c_str());
+		//printf("> %s has closed. \n", conn->toString().c_str());
 	}
 }//namespace cc

@@ -122,7 +122,7 @@ void EpollPoller::waitEpollfd()
 
 	if(nready == -1)
 	{
-		perror("epoll_wait error");
+		//perror("epoll_wait error");
 		exit(EXIT_FAILURE);
 	}
 	else if(nready == 0)

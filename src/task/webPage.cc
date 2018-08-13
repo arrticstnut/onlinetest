@@ -127,8 +127,21 @@ namespace cc
 		string line;
 		while(iss >> line){
 			for(auto & word : queryWords){
-				if(line.find(word) != string::npos){
-					result.push_back(line);
+				auto pos = line.find(word);
+				if(pos != string::npos){
+					auto beg = line.rfind("。",pos);
+					auto end = line.find("。",pos);
+					if(beg == string::npos){
+						beg = 0;
+					}else{
+						beg += 3;//不要头部的句号,"。"的unicode长度是3字节
+					}
+					if(end == string::npos){
+						end = line.size();
+					}else{
+						end += 3;//保留尾部的句号,"。"的unicode长度是3字节
+					}
+					result.push_back(line.substr(beg,end-beg));
 					break;
 				}
 			}
