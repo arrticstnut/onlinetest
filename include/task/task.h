@@ -1,7 +1,7 @@
 ///
 /// @file    task.h
-/// @author  lemon(haohb13@gmail.com)
-/// @date    2017-07-17 16:04:50
+/// @author
+/// @date    2018-07-17 16:04:50
 ///
 #ifndef __CC_TASK_H__
 #define __CC_TASK_H__
@@ -30,5 +30,5 @@ namespace cc
 			RedisPool * _redisPtr;
 			string _queryStr;
 	};
-}//namespace cc
+}//end of namespace
 #endif

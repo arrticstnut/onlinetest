@@ -121,7 +121,6 @@ namespace cc
 		redisContext *ctx = createContext();
 		if(ctx == NULL) return NULL;
 		redisReply *reply = (redisReply*)redisCommand(ctx,"%b %b",arg1.c_str(),arg1.size(),arg2.c_str(),arg2.size());
-		//redisReply *reply = (redisReply*)redisCommand(ctx,"%s %",arg1.c_str(),arg2.c_str());
 		releaseContext(ctx, reply != NULL);//reply == NULL则真正释放连接，reply != NULL则归还到连接池
 		return reply;
 	}
@@ -130,7 +129,6 @@ namespace cc
 		redisContext *ctx = createContext();
 		if(ctx == NULL) return NULL;
 		redisReply *reply = (redisReply*)redisCommand(ctx,"%b %b %b",arg1.c_str(),arg1.size(),arg2.c_str(),arg2.size(),arg3.c_str(),arg3.size());
-		//redisReply *reply = (redisReply*)redisCommand(ctx,"%s %",arg1.c_str(),arg2.c_str());
 		releaseContext(ctx, reply != NULL);//reply == NULL则真正释放连接，reply != NULL则归还到连接池
 		return reply;
 	}
@@ -140,7 +138,6 @@ namespace cc
 		redisContext *ctx = createContext();
 		if(ctx == NULL) return NULL;
 		redisReply *reply = (redisReply*)redisCommand(ctx,"%b %b %b %b",arg1.c_str(),arg1.size(),arg2.c_str(),arg2.size(),arg3.c_str(),arg3.size(),arg4.c_str(),arg4.size());
-		//redisReply *reply = (redisReply*)redisCommand(ctx,"%s %",arg1.c_str(),arg2.c_str());
 		releaseContext(ctx, reply != NULL);//reply == NULL则真正释放连接，reply != NULL则归还到连接池
 		return reply;
 	}

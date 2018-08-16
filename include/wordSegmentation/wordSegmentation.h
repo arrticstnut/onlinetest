@@ -58,6 +58,6 @@ namespace cc
 			static WordSegmentation instance;
 	};
 
-};//namespace cc
+};//end of namespace
 
 #endif

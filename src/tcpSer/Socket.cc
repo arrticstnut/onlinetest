@@ -1,65 +1,69 @@
- ///
- /// @file    Socket.cc
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2015-11-04 17:42:38
- ///
+///
+/// @file    Socket.cc
+/// @author
+///
 
 #include "Socket.h"
 #include "SocketUtil.h"
 #include "InetAddress.h"
+#include "cppLog.h"
+using namespace cc;
 
 namespace wd
 {
 
-Socket::Socket(int sockfd)
-: sockfd_(sockfd)
-{}
+	Socket::Socket(int sockfd)
+		: sockfd_(sockfd)
+	{}
 
-Socket::Socket()
-: sockfd_(createSocketFd())
-{
-}
-
-Socket::~Socket()
-{
-	::close(sockfd_);
-}
-
-void Socket::nonblock()
-{
-	setNonblock(sockfd_);
-}
-
-
-void Socket::shutdownWrite()
-{
-	if(::shutdown(sockfd_, SHUT_WR) == -1)
+	Socket::Socket()
+		: sockfd_(createSocketFd())
 	{
-		perror("shudown write error!");
 	}
-}
 
-
-InetAddress Socket::getLocalAddr(int sockfd)
-{
-	struct sockaddr_in addr;
-	socklen_t len = sizeof(sockaddr_in);
-	if(::getsockname(sockfd, (struct sockaddr *)&addr, &len) == -1)
+	Socket::~Socket()
 	{
-		perror("getsockname error");
+		::close(sockfd_);
 	}
-	return InetAddress(addr);
-}
 
-InetAddress Socket::getPeerAddr(int sockfd)
-{
-	struct sockaddr_in addr;
-	socklen_t len = sizeof(sockaddr_in);
-	if(::getpeername(sockfd, (struct sockaddr *)&addr, &len) == -1)
+	void Socket::nonblock()
 	{
-		perror("getpeername error");
+		setNonblock(sockfd_);
 	}
-	return InetAddress(addr);
-}
+
+
+	void Socket::shutdownWrite()
+	{
+		if(::shutdown(sockfd_, SHUT_WR) == -1)
+		{
+			//perror("shudown write error!");
+			logErrorLoc("shudown write error!");
+		}
+	}
+
+
+	InetAddress Socket::getLocalAddr(int sockfd)
+	{
+		struct sockaddr_in addr;
+		socklen_t len = sizeof(sockaddr_in);
+		if(::getsockname(sockfd, (struct sockaddr *)&addr, &len) == -1)
+		{
+			//perror("getsockname error");
+			logErrorLoc("getsockname error");
+		}
+		return InetAddress(addr);
+	}
+
+	InetAddress Socket::getPeerAddr(int sockfd)
+	{
+		struct sockaddr_in addr;
+		socklen_t len = sizeof(sockaddr_in);
+		if(::getpeername(sockfd, (struct sockaddr *)&addr, &len) == -1)
+		{
+			//perror("getpeername error");
+			logErrorLoc("getpeername error");
+		}
+		return InetAddress(addr);
+	}
 
 }// end of namespace wd

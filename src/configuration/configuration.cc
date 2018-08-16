@@ -1,9 +1,10 @@
 ///
 /// @file    configuration.cc
-/// @author  lemon(haohb13@gmail.com)
-/// @date    2017-07-18 17:38:30
+/// @author
+/// @date    2018-07-18 17:38:30
 ///
 
+#include "cppLog.h"
 #include "configuration.h"
 #include <unistd.h>
 namespace cc
@@ -17,8 +18,7 @@ namespace cc
 		std::ifstream ifs;
 		ifs.open(_confFilePath);
 		if(!ifs.good()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:    ";
-			cout<<"open confFile error"<<endl;	
+			logErrorLoc("open confFile error");
 			ifs.close();
 			exit(EXIT_FAILURE);
 		}
@@ -31,14 +31,12 @@ namespace cc
 		}
 		auto it = _confMap.find("StopWordsDictPath");
 		if(it == _confMap.end()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:    ";
-			cout<<"get stopWordDict error"<<endl;	
+			logErrorLoc("get stopWordDict error");
 		}else{
 			string stopWordDir = it->second;
 			std::ifstream ifs(stopWordDir);
 			if(!ifs.good()){
-				cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:    ";
-				cout<<"open stopWordDict error"<<endl;	
+				logErrorLoc("open stopWordDict error");
 			}else{//将停用词加入停用词集合
 				string stopWords;
 				while(ifs >> stopWords){
@@ -60,4 +58,4 @@ namespace cc
 
 	Configuration Configuration::_instance = Configuration("../configuration/configuration.conf");
 
-	}//namespace cc
+}//namespace cc

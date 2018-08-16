@@ -1,9 +1,8 @@
- ///
- /// @file    Condition.h
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-07-05 10:57:32
- ///
- 
+///
+/// @file    Condition.h
+/// @author
+///
+
 #ifndef __WD_CONDITION_H__
 #define __WD_CONDITION_H__
 
@@ -14,25 +13,25 @@
 namespace wd
 {
 
-class MutexLock;
+	class MutexLock;
 
-class Condition
-: Noncopyable
-{
-public:
-	Condition(MutexLock & mutex);
+	class Condition
+		: Noncopyable
+	{
+		public:
+			Condition(MutexLock & mutex);
 
-	~Condition();
+			~Condition();
 
-	void wait();
-	void notify();
-	void notifyall();
+			void wait();
+			void notify();
+			void notifyall();
 
-private:
-	pthread_cond_t _cond;
-	MutexLock & _mutex;
-};
+		private:
+			pthread_cond_t _cond;
+			MutexLock & _mutex;
+	};
 
-}//end of namespace wd
+}//end of namespace
 
 #endif

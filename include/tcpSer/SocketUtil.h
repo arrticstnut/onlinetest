@@ -1,9 +1,8 @@
- ///
- /// @file    SocketUtil.h
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-05-11 19:00:58
- ///
- 
+///
+/// @file    SocketUtil.h
+/// @author
+///
+
 #ifndef __WD_SOCKETUTIL_H__
 #define __WD_SOCKETUTIL_H__
 
@@ -23,93 +22,93 @@
 namespace wd
 {
 
-inline int createSocketFd()
-{
-	int fd = ::socket(AF_INET, SOCK_STREAM, 0);
-	if(fd == -1)
+	inline int createSocketFd()
 	{
-		perror("socket create error!");
+		int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+		if(fd == -1)
+		{
+			perror("socket create error!");
+		}
+		return fd;
 	}
-	return fd;
-}
 
-inline void setNonblock(int fd)
-{
-	int flags = ::fcntl(fd, F_GETFL, 0);
-	flags |= O_NONBLOCK;
-	::fcntl(fd, F_SETFL, flags);
-}
-
-inline int createEpollFd()
-{
-	int efd = ::epoll_create1(0);
-	if(-1 == efd)
+	inline void setNonblock(int fd)
 	{
-		perror("epoll_create1 error");
-		exit(EXIT_FAILURE);
+		int flags = ::fcntl(fd, F_GETFL, 0);
+		flags |= O_NONBLOCK;
+		::fcntl(fd, F_SETFL, flags);
 	}
-	return efd;
-}
 
-inline int createEventFd()
-{
-	int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-	if(-1 == evtfd)
+	inline int createEpollFd()
 	{
-		perror("eventfd create error");
+		int efd = ::epoll_create1(0);
+		if(-1 == efd)
+		{
+			perror("epoll_create1 error");
+			exit(EXIT_FAILURE);
+		}
+		return efd;
 	}
-	return evtfd;
-}
 
-inline void addEpollFdRead(int efd, int fd)
-{
-	struct epoll_event ev;
-	ev.data.fd = fd;
-	ev.events = EPOLLIN;
-	int ret = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
-	if(-1 == ret)
+	inline int createEventFd()
 	{
-		perror("epoll_ctl add error");
-		exit(EXIT_FAILURE);
+		int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+		if(-1 == evtfd)
+		{
+			perror("eventfd create error");
+		}
+		return evtfd;
 	}
-}
 
-inline void delEpollReadFd(int efd, int fd)
-{
-	struct epoll_event ev;
-	ev.data.fd = fd;
-	int ret = epoll_ctl(efd, EPOLL_CTL_DEL, fd, &ev);
-	if(-1 == ret)
+	inline void addEpollFdRead(int efd, int fd)
 	{
-		perror("epoll_ctl del error");
-		exit(EXIT_FAILURE);
+		struct epoll_event ev;
+		ev.data.fd = fd;
+		ev.events = EPOLLIN;
+		int ret = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
+		if(-1 == ret)
+		{
+			perror("epoll_ctl add error");
+			exit(EXIT_FAILURE);
+		}
 	}
-}
 
-//预览数据
-inline size_t recvPeek(int sockfd, void * buf, size_t len)
-{
-	int nread;
-	do
+	inline void delEpollReadFd(int efd, int fd)
 	{
-		nread = ::recv(sockfd, buf, len, MSG_PEEK);
-	}while(nread == -1 && errno == EINTR);
-	return nread;
-}
-
-//通过预览数据，判断conn是否关闭
-inline bool isConnectionClosed(int sockfd)
-{
-	char buf[1024];
-	int nread = recvPeek(sockfd, buf, sizeof(buf));
-	if(-1 == nread)
-	{
-		perror("recvPeek--- ");
-		return true;
+		struct epoll_event ev;
+		ev.data.fd = fd;
+		int ret = epoll_ctl(efd, EPOLL_CTL_DEL, fd, &ev);
+		if(-1 == ret)
+		{
+			perror("epoll_ctl del error");
+			exit(EXIT_FAILURE);
+		}
 	}
-	return (0 == nread);
-}
 
-}//end of namespace wd
+	//预览数据
+	inline size_t recvPeek(int sockfd, void * buf, size_t len)
+	{
+		int nread;
+		do
+		{
+			nread = ::recv(sockfd, buf, len, MSG_PEEK);
+		}while(nread == -1 && errno == EINTR);
+		return nread;
+	}
+
+	//通过预览数据，判断conn是否关闭
+	inline bool isConnectionClosed(int sockfd)
+	{
+		char buf[1024];
+		int nread = recvPeek(sockfd, buf, sizeof(buf));
+		if(-1 == nread)
+		{
+			perror("recvPeek--- ");
+			return true;
+		}
+		return (0 == nread);
+	}
+
+}//end of namespace
 
 #endif

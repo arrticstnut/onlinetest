@@ -1,7 +1,7 @@
 ///
 /// @file    configuration.h
-/// @author  lemon(haohb13@gmail.com)
-/// @date    2017-07-18 11:08:54
+/// @author
+/// @date    2018-07-18 11:08:54
 ///
 #ifndef __CC_CONFIGURATION_H__
 #define __CC_CONFIGURATION_H__

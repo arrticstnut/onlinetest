@@ -1,22 +1,25 @@
  ///
  /// @file    startServer.cc
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-07-22 08:42:35
+ /// @author
+ /// @date    2018-07-22 08:42:35
  ///
-#include <string>
+#include "cppLog.h"
 #include "configuration.h"
 #include "wordSegmentation.h"
 #include "wordQuery.h"
 #include "onlineServer.h"
+#include <string>
 #include <unistd.h>
 
-void test1(){
-	daemon(1,0);
+void start(){
+	cc::logInfo("[--server start--]");
 	cc::Configuration conf = cc::Configuration::getInstance();
 	cc::OnlineServer ser(conf);
+	cc::logInfo("[--server close--]");
 }
 
 int main(){
-	test1();
+	daemon(1,0);
+	start();
 	return 0;
 }

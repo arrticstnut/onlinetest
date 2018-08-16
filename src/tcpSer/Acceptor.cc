@@ -1,15 +1,16 @@
  ///
  /// @file    Acceptor.cpp
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-05-11 18:48:06
+ /// @author
  ///
  
 #include "Acceptor.h"
 #include "SocketUtil.h"
+#include "cppLog.h"
 
 #include <iostream>
 using std::cout;
 using std::endl;
+using namespace cc;
 
 
 namespace wd
@@ -33,7 +34,8 @@ int Acceptor::accept()
 	int peerfd = ::accept(listenSock_.fd(), NULL, NULL);
 	if(peerfd == -1)
 	{
-		perror("accept error");
+		logErrorLoc("accept error");
+		//perror("accept error");
 	}
 	return peerfd;
 }
@@ -47,7 +49,8 @@ void Acceptor::setReuseAddr(bool flag)
 					&on, 
 					static_cast<socklen_t>(sizeof(on))) == -1)
 	{
-		perror("setsockopt reuseaddr error");
+		logErrorLoc("setsockopt reuseaddr error");
+		//perror("setsockopt reuseaddr error");
 		::close(listenSock_.fd());
 		exit(EXIT_FAILURE);
 	}
@@ -64,14 +67,16 @@ void Acceptor::setReusePort(bool flag)
 					&on,
 					static_cast<socklen_t>(sizeof(on))) == -1)
 	{
-		perror("setsockopt reuseport error");
+		logErrorLoc("setsockopt reuseport error");
+		//perror("setsockopt reuseport error");
 		::close(listenSock_.fd());
 		exit(EXIT_FAILURE);
 	}
 #else
 	if(flag)
 	{
-		fprintf(stderr, "SO_REUSEPORT is not supported!\n");
+		logErrorLoc("SO_REUSEPORT is not supported!");
+		//fprintf(stderr, "SO_REUSEPORT is not supported!\n");
 	}
 #endif
 
@@ -83,7 +88,8 @@ void Acceptor::bind()
 					(const struct sockaddr*)addr_.getSockAddrPtr(), 
 					sizeof(InetAddress)))
 	{
-		perror("bind error");
+		logErrorLoc("bind error");
+		//perror("bind error");
 		::close(listenSock_.fd());
 		exit(EXIT_FAILURE);
 	}
@@ -93,7 +99,8 @@ void Acceptor::listen()
 {
 	if(-1 == ::listen(listenSock_.fd(), 10))
 	{
-		perror("listen error");
+		logErrorLoc("listen error");
+		//perror("listen error");
 		::close(listenSock_.fd());
 		exit(EXIT_FAILURE);
 	}

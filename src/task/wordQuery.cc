@@ -5,6 +5,7 @@
 ///
 
 #include "wordQuery.h"
+#include "cppLog.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -28,8 +29,7 @@ namespace cc
 		auto confMap = _conf.getConfMap();
 		auto it = confMap.find("PageLibDir");
 		if(it == confMap.end()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n";
-			cout << "find confMap error" << endl;
+			logErrorLoc("find confMap error");
 			return;
 		}
 		string pageLibDir = it->second;
@@ -37,8 +37,7 @@ namespace cc
 		std::ifstream ifsOffsetLib(pageLibDir + "offsetLib.dat");
 		std::ifstream ifsInvertIndex(pageLibDir + "invertIndex.dat");
 		if(!ifsPageLib.good() || !ifsOffsetLib.good() || !ifsInvertIndex.good()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n";
-			cout << "open file error" << endl;
+			logErrorLoc("open file error");
 			return;
 		}
 

@@ -1,9 +1,8 @@
- ///
- /// @file    Threadpool.h
- /// @author  lemon(haohb13@gmail.com)
- /// @date    2017-07-05 17:02:11
- ///
- 
+///
+/// @file    Threadpool.h
+/// @author
+///
+
 #ifndef __WD_THREADPOOL_H__
 #define __WD_THREADPOOL_H__
 
@@ -22,32 +21,32 @@ using std::shared_ptr;
 namespace wd
 {
 
-typedef std::function<void()> Task;
+	typedef std::function<void()> Task;
 
-class Thread;
+	class Thread;
 
-class Threadpool
-{
-public:
-	Threadpool(size_t threadNum, size_t queSize);
-	~Threadpool();
+	class Threadpool
+	{
+		public:
+			Threadpool(size_t threadNum, size_t queSize);
+			~Threadpool();
 
-	void start();
-	void stop();
-	void addTask(const Task & task);
-private:
-	Task getTask();
+			void start();
+			void stop();
+			void addTask(const Task & task);
+		private:
+			Task getTask();
 
-	void threadFunc();
+			void threadFunc();
 
-private:
-	size_t _threadNum;
-	size_t _queSize;
-	vector<shared_ptr<Thread>> _threads;
-	TaskQueue _taskQue;
-	bool _isExit;
-};
+		private:
+			size_t _threadNum;
+			size_t _queSize;
+			vector<shared_ptr<Thread>> _threads;
+			TaskQueue _taskQue;
+			bool _isExit;
+	};
 
-}//end of namespace wd
+}//end of namespace
 
 #endif

@@ -5,6 +5,7 @@
 ///
 
 #include "webPage.h"
+#include "cppLog.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,9 +17,7 @@
 using std::cout;
 using std::endl;
 using std::ifstream;
-using std::regex_search;
-using std::log;
-using std::sqrt;
+//using std::regex_search;
 using std::string;
 using std::pair;
 using std::make_pair;
@@ -34,27 +33,26 @@ namespace cc
 	}
 
 	void WebPage::processDoc(Configuration & conf,WordSegmentation & jieba){//对格式化文档进行处理
-#if 0
-		//使用正则表达式提取信息
-		std::regex rId("(?:<docid>)((.|\n)*)(?:</docid>)");
-		std::regex rTitle("(?:<title>)((.|\n)*)(?:</title>)");
-		std::regex rLink("(?:<link>)((.|\n)*)(?:</link>)");
-		std::regex rCont("(?:<content>)((.|\n)*)(?:</content>)");
-		std::smatch smId;
-		std::smatch smTitle;
-		std::smatch smLink;
-		std::smatch smCont;
-		if(!regex_search(doc,smId,rId) || !regex_search(doc,smTitle,rTitle) || !regex_search(doc,smLink,rLink) || !regex_search(doc,smCont,rCont)){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n";
-			cout << "regex_search error" << endl;
-			return ;
-		}
-		_doc = doc;
-		_docId = std::stoi(smId.str(1));
-		_docTitle = smTitle.str(1);
-		_docUrl = smLink.str(1);
-		_docContent = smCont.str(1);
-#endif
+
+		//    //使用正则表达式提取信息
+		//    std::regex rId("(?:<docid>)((.|\n)*)(?:</docid>)");
+		//    std::regex rTitle("(?:<title>)((.|\n)*)(?:</title>)");
+		//    std::regex rLink("(?:<link>)((.|\n)*)(?:</link>)");
+		//    std::regex rCont("(?:<content>)((.|\n)*)(?:</content>)");
+		//    std::smatch smId;
+		//    std::smatch smTitle;
+		//    std::smatch smLink;
+		//    std::smatch smCont;
+		//    if(!regex_search(doc,smId,rId) || !regex_search(doc,smTitle,rTitle) || !regex_search(doc,smLink,rLink) || !regex_search(doc,smCont,rCont)){
+		//    	//logErrorLoc("sregex_search error");
+		//    	return ;
+		//    }
+		//    _doc = doc;
+		//    _docId = std::stoi(smId.str(1));
+		//    _docTitle = smTitle.str(1);
+		//    _docUrl = smLink.str(1);
+		//    _docContent = smCont.str(1);
+
 		//使用正则表达式会遇到原因不明的段错误,改用string的find
 		auto docidB = _doc.find("<docid>");
 		auto docidE = _doc.find("</docid>");
@@ -65,11 +63,13 @@ namespace cc
 		auto contentB = _doc.find("<content>",linkE);
 		auto contentE = _doc.rfind("</content>");
 		auto npos = std::string::npos;
+
 		if(docidB == npos || docidE == npos || titleB == npos || titleE == npos 
 				|| linkB == npos || linkE == npos || contentB == npos || contentE == npos){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n";
-			cout << "search docItem error" << endl;
+
+			logErrorLoc("search docItem error");
 		}
+
 		docidB += string("<docid>").size();
 		_docId = stoi(_doc.substr(docidB,docidE - docidB));
 		titleB += string("<title>").size();

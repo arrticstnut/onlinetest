@@ -5,6 +5,7 @@
 ///
 
 #include "wordSegmentation.h"
+#include "cppLog.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -31,8 +32,7 @@ namespace cc
 	void WordSegmentation::save(const string & fileOut) {
 		ofstream ofs(fileOut);
 		if(!ofs.good()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n"; 
-			cout<<"open file error"<<endl;
+			logErrorLoc("open file error");
 			ofs.close();
 			return;
 		}
@@ -47,8 +47,7 @@ namespace cc
 		string doc;
 		ifstream ifs(fileIn);
 		if(!ifs.good()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n"; 
-			cout<<"open file error"<<endl;
+			logErrorLoc("open file error");
 			ifs.close();
 			return _vecWords;
 		}
@@ -69,8 +68,7 @@ namespace cc
 		string sentence;
 		istringstream iss(str);
 		if(!iss.good()){
-			cout<<"@["<<__FILE__<<"::"<<__FUNCTION__<<"]:>>\n"; 
-			cout<<"open str error"<<endl;
+			logErrorLoc("open file error");
 			return _vecWords;
 		}
 		_vecWords.clear();

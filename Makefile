@@ -11,6 +11,7 @@ INC_DIR:= \
 	./include/wordSegmentation/cppjieba/ \
 	./include/wordSegmentation/cppjieba/limonp \
 	./include/redis \
+	./include/log \
 	/usr/local/include \
 	
 #SRC_DIR:= 
@@ -34,9 +35,10 @@ SRCS:=\
 	$(wildcard ./src/onlineServer/*.cc) \
 	$(wildcard ./src/wordSegmentation/*.cc) \
 	$(wildcard ./src/redis/*.cc) \
+	$(wildcard ./src/log/*.cc) \
 
 OBJS:= $(patsubst %.cc, %.o, $(SRCS))
-LIBS:= -lpthread -ljson -lhiredis
+LIBS:= -llog4cpp -lpthread -ljson -lhiredis
 
 CXX:=g++
 

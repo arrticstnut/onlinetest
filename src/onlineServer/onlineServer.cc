@@ -1,9 +1,11 @@
 ///
 /// @file    onlineServer.cc
-/// @author  lemon(haohb13@gmail.com)
-/// @date    2017-07-21 14:30:44
+/// @author
+/// @date    2018-07-21 14:30:44
 ///
+//
 #include "onlineServer.h"
+#include "cppLog.h"
 
 namespace cc
 {
@@ -22,7 +24,8 @@ namespace cc
 		_tcpServer.start();
 	}
 	void OnlineServer::onConnection(const wd::TcpConnectionPtr & conn){
-		//printf("\n> %s has connected!\n", conn->toString().c_str());
+		string connInfo = conn->toString() + " [--connected--] ";
+		logInfo(connInfo.c_str());
 	}
 
 	//接收客户端信息，将收到的信息交给线程池处理
@@ -34,9 +37,14 @@ namespace cc
 				querWord.erase(it);
 			}
 		}
+
+		string messageInfo = conn->toString() + " [--query--] " + querWord;
+		logInfo(messageInfo.c_str());
+
 		(*pThreadPool).addTask(std::bind(&Task::process,Task(conn,wordQueryPtr,redisPtr,querWord)));
 	}
 	void OnlineServer::onClose(const wd::TcpConnectionPtr & conn){
-		//printf("> %s has closed. \n", conn->toString().c_str());
+		string closeInfo = conn->toString() + " [--closed--] ";
+		logInfo(closeInfo.c_str());
 	}
 }//namespace cc
